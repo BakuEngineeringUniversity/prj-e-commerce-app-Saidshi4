@@ -1,3 +1,5 @@
+Mobile
+
 Software Requirements Specification (SRS) for eCommerce App
 1. Introduction
 •	The eCommerce App project aims to develop a mobile application and backend system for users to browse, search, and purchase products online.
