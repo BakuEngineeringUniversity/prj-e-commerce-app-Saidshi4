@@ -1,4 +1,4 @@
-package com.example.palidmarket;
+package com.example.palidmarket.mainFragments;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.palidmarket.R;
 import com.example.palidmarket.adapter.CategoryRecycleViewAdapter;
+import com.example.palidmarket.adapter.ProductRecycleViewAdapter;
 import com.example.palidmarket.api.ApiClient;
 import com.example.palidmarket.api.ApiInterface;
 import com.example.palidmarket.entities.Category;
@@ -25,15 +27,11 @@ import retrofit2.Retrofit;
 
 public class CategoryFragment extends Fragment {
 
-
-
     RecyclerView recyclerView;
 
     public CategoryFragment() {
 
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,9 +63,12 @@ public class CategoryFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Category>> call, @NonNull Throwable t) {
+            public void onFailure(Call<List<Category>> call, Throwable t) {
                 Log.d("nspDebug", t.getMessage() != null ? t.getMessage() : "");
             }
+
+
         });
+
     }
 }

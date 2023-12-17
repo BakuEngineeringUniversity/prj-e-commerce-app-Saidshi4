@@ -37,21 +37,22 @@ public class SignUpActivity extends AppCompatActivity {
         EditText passwordEditText = findViewById(R.id.password);
         EditText confirmEditText = findViewById(R.id.confirm);
 
+
         String firstName = firstNameEditText.getText().toString();
         String lastName = lastNameEditText.getText().toString();
         String phoneNumber = phoneNumberEditText.getText().toString();
         String password = passwordEditText.getText().toString();
         String confirm = confirmEditText.getText().toString();
 
-        if (firstNameEditText.getText().toString().equals("")) {
+        if (firstName.equals("")) {
             android.widget.Toast.makeText(this, "Enter First Name", android.widget.Toast.LENGTH_SHORT).show();
-        } else if (lastNameEditText.getText().toString().equals("")) {
+        } else if (lastName.equals("")) {
             android.widget.Toast.makeText(this, "Enter Last Name", android.widget.Toast.LENGTH_SHORT).show();
-        } else if (phoneNumberEditText.getText().toString().equals("")) {
+        } else if (phoneNumber.equals("")) {
             android.widget.Toast.makeText(this, "Enter Phone Number", android.widget.Toast.LENGTH_SHORT).show();
-        } else if (passwordEditText.getText().toString().equals("")) {
+        } else if (password.equals("")) {
             android.widget.Toast.makeText(this, "Enter Password", android.widget.Toast.LENGTH_SHORT).show();
-        } else if (confirmEditText.getText().toString().equals("")) {
+        } else if (confirm.equals("")) {
             android.widget.Toast.makeText(this, "Confirm Password", android.widget.Toast.LENGTH_SHORT).show();
         } else if (!password.equals(confirm)) {
             android.widget.Toast.makeText(this, "Passwords do not match", android.widget.Toast.LENGTH_SHORT).show();
