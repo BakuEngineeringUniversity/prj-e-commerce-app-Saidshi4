@@ -5,17 +5,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-
-import com.example.palidmarket.api.ApiClient;
-import com.example.palidmarket.api.ApiInterface;
 import com.example.palidmarket.databinding.ActivityMainBinding;
 import com.example.palidmarket.entities.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -27,9 +19,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setBottomNavigation();
-
     }
-
     public void setBottomNavigation(){
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);

@@ -1,6 +1,7 @@
 package com.example.palidmarket.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +22,14 @@ public class CategoryRecycleViewAdapter extends RecyclerView.Adapter<CategoryRec
 
     private final Context context;
     private final List<Category> categories;
-    public interface OnCategoryClickListener {
-        void onCategoryClick(int categoryId);
-    }
+    public final RecycleViewInterface recycleViewInterface;
 
-    public CategoryRecycleViewAdapter(Context context, List<Category> categories){
+
+
+    public CategoryRecycleViewAdapter(Context context, List<Category> categories, RecycleViewInterface recycleViewInterface) {
         this.context = context;
         this.categories = categories;
+        this.recycleViewInterface = recycleViewInterface;
     }
 
 
@@ -55,6 +57,17 @@ public class CategoryRecycleViewAdapter extends RecyclerView.Adapter<CategoryRec
             holder.imageItem.setImageResource(R.drawable.place_holder);
         }
 
+        holder.itemView.setOnClickListener(v -> {
+            int p = holder.getAdapterPosition();
+            if(recycleViewInterface != null){
+                int itemId = categories.get(p).getId();
+                if (p != RecyclerView.NO_POSITION) {
+                    recycleViewInterface.onItemClick(itemId);
+                    Log.d("nspDebug", "CategoryRecycleViewAdapter.onItemClick: " + itemId);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -66,10 +79,12 @@ public class CategoryRecycleViewAdapter extends RecyclerView.Adapter<CategoryRec
         public TextView txtItem;
         public ImageView imageItem;
 
-        public ViewHolder(View view) {
+
+        public ViewHolder(@NonNull View view) {
             super(view);
             txtItem = view.findViewById(R.id.itemCategory);
             imageItem = view.findViewById(R.id.imgCategory);
+
         }
     }
 }

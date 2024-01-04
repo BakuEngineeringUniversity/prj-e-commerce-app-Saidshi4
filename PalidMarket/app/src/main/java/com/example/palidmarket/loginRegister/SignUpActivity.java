@@ -76,7 +76,7 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         User savedUser = response.body();
-
+                        savedUser.setId(response.body().getId());
                         savedUser.setFirstName(firstName);
                         savedUser.setLastName(lastName);
                         savedUser.setPhoneNumber(phoneNumber);

@@ -9,17 +9,15 @@ public class Product {
     @SerializedName("unitPrice")
     @Expose
     private String unitPrice;
-    @SerializedName("category")
-    @Expose
-    private Category category;
+
 
     public Product() {
     }
 
-    public Product(String name, String unitPrice, Category category) {
+    public Product(String name, String unitPrice) {
         this.name = name;
         this.unitPrice = unitPrice;
-        this.category = category;
+
     }
 
     public String getName() {
@@ -38,11 +36,4 @@ public class Product {
         this.unitPrice = unitPrice;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
 }

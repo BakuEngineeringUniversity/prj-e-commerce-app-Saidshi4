@@ -28,6 +28,19 @@
         <activity
             android:name=".mainFragments.HomeFragment"
             android:exported="false" />
+
+        <activity
+            android:name=".mainFragments.CategoryFragment"
+            android:exported="false" />
+        <activity
+            android:name=".mainFragments.CartFragment"
+            android:exported="false" />
+        <activity
+            android:name=".mainFragments.ProfileFragment"
+            android:exported="false" />
+        <activity
+            android:name=".sideFragments.ProductFragment"
+            android:exported="false" />
         <activity
             android:name=".loginRegister.SignInActivity"
             android:exported="false" />

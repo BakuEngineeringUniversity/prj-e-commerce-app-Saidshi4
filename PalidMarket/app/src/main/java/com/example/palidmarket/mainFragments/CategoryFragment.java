@@ -8,15 +8,17 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.palidmarket.R;
 import com.example.palidmarket.adapter.CategoryRecycleViewAdapter;
-import com.example.palidmarket.adapter.ProductRecycleViewAdapter;
+import com.example.palidmarket.adapter.RecycleViewInterface;
 import com.example.palidmarket.api.ApiClient;
 import com.example.palidmarket.api.ApiInterface;
 import com.example.palidmarket.entities.Category;
+import com.example.palidmarket.sideFragments.ProductFragment;
 
 import java.util.List;
 
@@ -25,22 +27,24 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class CategoryFragment extends Fragment {
+public class CategoryFragment extends Fragment implements RecycleViewInterface {
 
     RecyclerView recyclerView;
-
-    public CategoryFragment() {
-
-    }
+    int categoryId = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("nspDebug", "categoryId in onCreate: " + categoryId);
         View view = inflater.inflate(R.layout.fragment_category, container, false);
         recyclerView = view.findViewById(R.id.listOfCategories);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         loadCategories();
         return view;
+    }
+
+    public CategoryFragment() {
+
     }
 
     private void loadCategories() {
@@ -53,22 +57,31 @@ public class CategoryFragment extends Fragment {
                 List<Category> categories = response.body();
 
                 if (categories != null) {
+                    CategoryRecycleViewAdapter adapter = new CategoryRecycleViewAdapter(getActivity(), categories, CategoryFragment.this);
+                    recyclerView.setAdapter(adapter);
                     for (Category category : categories) {
                         Log.d("nspDebug", category.getName() != null ? category.getName() : "");
                     }
-
-                    CategoryRecycleViewAdapter adapter = new CategoryRecycleViewAdapter(getActivity(), categories);
-                    recyclerView.setAdapter(adapter);
                 }
             }
-
             @Override
-            public void onFailure(Call<List<Category>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Category>> call, @NonNull Throwable t) {
                 Log.d("nspDebug", t.getMessage() != null ? t.getMessage() : "");
             }
-
-
         });
+    }
+    @Override
+    public void onItemClick(int categoryId) {
+        Log.d("nspDebug", "CategoryFragment.onItemClick: " + categoryId);
+        this.categoryId = categoryId;
+        loadProductFragment(categoryId);
+    }
 
+    private void loadProductFragment(int categoryId) {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        ProductFragment productFragment = new ProductFragment(categoryId);
+        transaction.replace(R.id.productFragmentContainer, productFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.palidmarket.api;
 
+import com.example.palidmarket.entities.Cart;
 import com.example.palidmarket.entities.Category;
 import com.example.palidmarket.entities.Product;
 import com.example.palidmarket.entities.User;
@@ -40,5 +41,7 @@ public interface ApiInterface {
     Call<List<Category>> getCategory();
 
     @GET("products/{getByCategoryId}")
-    Call<List<Product>> getProductsByCategoryId(int categoryId);
+    Call<List<Product>> getProductsByCategoryId(@Path("getByCategoryId") int categoryId);
+    @GET("carts/{userId}")
+    Call<List<Cart>> getCart(@Path("userId") int userId);
 }
