@@ -1,5 +1,8 @@
 package com.example.palidmarket.sideFragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +21,7 @@ import com.example.palidmarket.adapter.ProductRecycleViewAdapter;
 import com.example.palidmarket.api.ApiClient;
 import com.example.palidmarket.api.ApiInterface;
 import com.example.palidmarket.entities.Product;
+import com.example.palidmarket.entities.Result;
 
 
 import java.util.List;
@@ -32,6 +36,9 @@ public class ProductFragment extends Fragment {
     private int categoryId;
     private RecyclerView recyclerView;
     private ProductRecycleViewAdapter productAdapter;
+    SharedPreferences sharedPreferences;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    private static final String TOKEN = "token";
 
     public ProductFragment(int categoryId) {
         this.categoryId = categoryId;
@@ -39,36 +46,45 @@ public class ProductFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        String token = sharedPreferences.getString(TOKEN, "");
         View view = inflater.inflate(R.layout.fragment_product, container, false);
         recyclerView = view.findViewById(R.id.listOfProducts);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        loadProducts(categoryId);
+        loadProducts(token,categoryId);
         return view;
     }
     public ProductFragment() {
 
     }
 
-    private void loadProducts(int categoryId) {
+    private void loadProducts(String token, int categoryId) {
         Retrofit retrofit = new ApiClient().getClient();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 
-        apiInterface.getProductsByCategoryId(categoryId).enqueue(new retrofit2.Callback<List<Product>>() {
+        apiInterface.getProductsByCategoryId("Bearer " + token, categoryId).enqueue(new retrofit2.Callback<Result<List<Product>>>() {
             @Override
-            public void onResponse(@NonNull Call<List<Product>> call, @NonNull Response<List<Product>> response) {
-                List<Product> products = response.body();
-                if (products != null) {
-                    productAdapter = new ProductRecycleViewAdapter(requireContext(), products);
-                    recyclerView.setAdapter(productAdapter);
-                    for (Product product : products) {
-                        Log.d("nspDebug", product.getName() != null ? product.getName() : "");
+            public void onResponse(@NonNull Call<Result<List<Product>>> call, @NonNull Response<Result<List<Product>>> response) {
+                if (response.body() != null) {
+                    Result<List<Product>> result = response.body();
+                    List<Product> products = result.getData();
+
+                    if (products != null) {
+                        productAdapter = new ProductRecycleViewAdapter(requireContext(), products);
+                        recyclerView.setAdapter(productAdapter);
+
+                        for (Product product : products) {
+                            Log.d("nspDebug", product.getName() != null ? product.getName() : "");
+                        }
                     }
+                } else {
+                    Log.e("nspDebug","response body is null");
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Product>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Result<List<Product>>> call, @NonNull Throwable t) {
                 Log.e("Error", Objects.requireNonNull(t.getMessage()));
             }
         });

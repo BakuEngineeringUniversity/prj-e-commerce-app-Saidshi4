@@ -3,10 +3,9 @@ package com.example.palidmarket.entities;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Set;
+
 public class User {
-
-
-
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -22,6 +21,8 @@ public class User {
     @SerializedName("password")
     @Expose
     private String password;
+
+    private Set<Integer> roles;
 
 
     public Integer getId() {
@@ -62,5 +63,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Integer> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Integer> roles) {
+        this.roles = roles;
     }
 }

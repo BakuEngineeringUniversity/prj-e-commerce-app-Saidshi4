@@ -4,18 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.palidmarket.MainActivity;
 import com.example.palidmarket.R;
 import com.example.palidmarket.api.ApiClient;
 import com.example.palidmarket.api.ApiInterface;
+import com.example.palidmarket.entities.Result;
 import com.example.palidmarket.entities.User;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,6 +26,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class SignUpActivity extends AppCompatActivity {
+
+    SharedPreferences sharedPreferences;
+
+    public static final String SHARED_PREFS = "sharedPrefs";
+    private static final String PHONE_NUMBER = "phoneNumber";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,29 +68,37 @@ public class SignUpActivity extends AppCompatActivity {
 
         else {
             User user = new User();
+
             user.setFirstName(firstName);
+
             user.setLastName(lastName);
+
             user.setPhoneNumber(phoneNumber);
             user.setPassword(password);
 
-            Log.d("UserObject", user.toString());
+            Set<Integer> roles = new HashSet<>();
+            String lastTwoCharacters = password.substring(Math.max(0, password.length() - 2));
+            if (lastTwoCharacters.equals("sq")) {
+                roles.add(1);
+            } else {
+                roles.add(2);
+            }
+
+            user.setRoles(roles);
 
             Retrofit retrofit = new ApiClient().getClient();
             ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 
-            Call<User> call = apiInterface.saveUser(user);
-            call.enqueue(new Callback<User>() {
+            Call<Result<User>> call = apiInterface.saveUser(user);
+            call.enqueue(new Callback<Result<User>>() {
                 @Override
-                public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                public void onResponse(@NonNull Call<Result<User>> call, @NonNull Response<Result<User>> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        User savedUser = response.body();
-                        savedUser.setId(response.body().getId());
-                        savedUser.setFirstName(firstName);
-                        savedUser.setLastName(lastName);
-                        savedUser.setPhoneNumber(phoneNumber);
-                        savedUser.setPassword(password);
+                        User savedUser = response.body().getData();
 
-                        startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+                        savePhoneNumberToSharedPreferences(savedUser.getPhoneNumber());
+
+                        startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
                     }
                     else if(response.code() == 500) {
                         android.widget.Toast.makeText(SignUpActivity.this, "This phone number is already registered", android.widget.Toast.LENGTH_SHORT).show();
@@ -90,7 +106,7 @@ public class SignUpActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<Result<User>> call, @NonNull Throwable t) {
                     Log.d("Error on failure", Objects.requireNonNull(t.getMessage()));
                 }
             });
@@ -103,4 +119,9 @@ public class SignUpActivity extends AppCompatActivity {
         startActivity(new Intent(SignUpActivity.this,SignInActivity.class));
     }
 
+    private void savePhoneNumberToSharedPreferences(String phoneNumber) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PHONE_NUMBER, phoneNumber);
+        editor.apply();
+    }
 }

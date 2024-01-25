@@ -14,6 +14,8 @@ import com.example.palidmarket.MainActivity;
 import com.example.palidmarket.R;
 import com.example.palidmarket.api.ApiClient;
 import com.example.palidmarket.api.ApiInterface;
+import com.example.palidmarket.entities.Authentication;
+import com.example.palidmarket.entities.Result;
 import com.example.palidmarket.entities.User;
 import com.example.palidmarket.mainFragments.CartFragment;
 
@@ -28,6 +30,7 @@ public class SignInActivity extends AppCompatActivity {
 
     public static final String SHARED_PREFS = "sharedPrefs";
     private static final String KEY_ID = "id";
+    private static final String TOKEN = "token";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +61,14 @@ public class SignInActivity extends AppCompatActivity {
             user.setPhoneNumber(phoneNumber);
             user.setPassword(password);
 
-            apiInterface.loginUser(user).enqueue(new retrofit2.Callback<User>() {
+            apiInterface.loginUser(user).enqueue(new retrofit2.Callback<Result<Authentication>>() {
                 @Override
-                public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                public void onResponse(@NonNull Call<Result<Authentication>> call, @NonNull Response<Result<Authentication>> response) {
                     if(response.isSuccessful() && response.body() != null) {
-                        User userResponse = response.body();
-                        userResponse.setId(response.body().getId());
-                        userResponse.setPhoneNumber(phoneNumber);
-                        int userId = response.body().getId();
-                        Log.d("nspDebug", "SignInActivity: " + userId);
+                        Result<Authentication> result = response.body();
+                        String token = result.getData().getToken();
 
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putInt(KEY_ID, userId);
-                        editor.apply();
-
-
+                        saveTokenToSharedPreferences(token);
 
                         startActivity(new Intent(SignInActivity.this, MainActivity.class));
                     }
@@ -80,9 +76,9 @@ public class SignInActivity extends AppCompatActivity {
                         android.widget.Toast.makeText(SignInActivity.this, "Wrong phone number or password", android.widget.Toast.LENGTH_SHORT).show();
                     }
                 }
-                //sharedpreference
+                //sharedPreference
                 @Override
-                public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                public void onFailure(@NonNull Call<Result<Authentication>> call, @NonNull Throwable t) {
                     Log.d("nspDebug", t.getMessage() != null ? t.getMessage() : "");
                 }
             });
@@ -92,4 +88,11 @@ public class SignInActivity extends AppCompatActivity {
     public void signUp(View view) {
         startActivity(new Intent(SignInActivity.this,SignUpActivity.class));
     }
+
+    private void saveTokenToSharedPreferences(String token) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(TOKEN, token);
+        editor.apply();
+    }
+
 }

@@ -21,6 +21,7 @@ import com.example.palidmarket.adapter.CartRecycleViewAdapter;
 import com.example.palidmarket.api.ApiClient;
 import com.example.palidmarket.api.ApiInterface;
 import com.example.palidmarket.entities.Cart;
+import com.example.palidmarket.entities.Result;
 
 import java.util.List;
 
@@ -33,7 +34,10 @@ public class CartFragment extends Fragment {
     private CartRecycleViewAdapter cartRecycleViewAdapter;
 
     public static final String SHARED_PREFS = "sharedPrefs";
-    private static final String KEY_ID = "id";
+    private static final String PHONE_NUMBER = "phoneNumber";
+    SharedPreferences sharedPreferences;
+    private static final String TOKEN = "token";
+
 
     public CartFragment() {
         // Boş constructor
@@ -49,31 +53,39 @@ public class CartFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        String token = sharedPreferences.getString(TOKEN, "");
+        String phoneNumber = sharedPreferences.getString(PHONE_NUMBER,"0555151515");
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
         recyclerView = view.findViewById(R.id.listOfCart);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        loadCart();
+        loadCart(token,phoneNumber);
         return view;
     }
 
-    public void loadCart(){
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        int userId = sharedPreferences.getInt(KEY_ID, 0);
+    public void loadCart(String token, String phoneNumber){
+
         Retrofit retrofit = new ApiClient().getClient();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-        Log.d("nspDebug", "loadCart: " + userId);
-        apiInterface.getCart(userId).enqueue(new retrofit2.Callback<List<Cart>>() {
+        Log.d("nspDebug", "loadCart: " + phoneNumber);
+        apiInterface.getCart("Bearer " + token, token).enqueue(new retrofit2.Callback<Result<List<Cart>>>() {
             @Override
-            public void onResponse(@NonNull Call<List<Cart>> call, @NonNull Response<List<Cart>> response) {
-                List<Cart> carts = response.body();
-                cartRecycleViewAdapter = new CartRecycleViewAdapter(getContext(), carts);
-                recyclerView.setAdapter(cartRecycleViewAdapter);
-                Log.d("nspDebug", "onResponse: " + response.body());
+            public void onResponse(@NonNull Call<Result<List<Cart>>> call, @NonNull Response<Result<List<Cart>>> response) {
+                if (response.body() != null) {
+                    Result<List<Cart>> result = response.body();
+                    List<Cart> carts = result.getData();
+                    cartRecycleViewAdapter = new CartRecycleViewAdapter(getContext(), carts);
+                    recyclerView.setAdapter(cartRecycleViewAdapter);
+                    Log.d("nspDebug", "onResponse: " + response.body());
+                }else {
+                    Log.e("nspDebug","response body is null");
+                }
+
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Cart>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Result<List<Cart>>> call, @NonNull Throwable t) {
                 Log.d("nspDebug", "onFailure: " + t.getMessage());
             }
         });
