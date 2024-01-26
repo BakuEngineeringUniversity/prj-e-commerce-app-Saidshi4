@@ -27,6 +27,7 @@ import com.example.palidmarket.entities.Result;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -67,32 +68,44 @@ public class CartFragment extends Fragment implements CartRecycleViewInterface {
         return view;
     }
 
-    public void loadCart(String token, String phoneNumber){
-
+    public void loadCart(String token, String phoneNumber) {
         Retrofit retrofit = new ApiClient().getClient();
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
         Log.d("nspDebug", "loadCart: " + phoneNumber);
-        apiInterface.getCart("Bearer " + token, phoneNumber).enqueue(new retrofit2.Callback<Result<List<Cart>>>() {
+
+        apiInterface.getCart("Bearer " + token, phoneNumber).enqueue(new Callback<Result<List<Cart>>>() {
             @Override
             public void onResponse(@NonNull Call<Result<List<Cart>>> call, @NonNull Response<Result<List<Cart>>> response) {
-                if (response.body() != null) {
+                if (response.isSuccessful() && response.body() != null) {
                     Result<List<Cart>> result = response.body();
                     List<Cart> carts = result.getData();
                     cartRecycleViewAdapter = new CartRecycleViewAdapter(getContext(), carts, CartFragment.this);
                     recyclerView.setAdapter(cartRecycleViewAdapter);
                     Log.d("nspDebug", "onResponse: " + response.body());
-                }else {
-                    Log.e("nspDebug","response body is null");
+                } else {
+                    handleApiError(response);
                 }
-
             }
 
             @Override
             public void onFailure(@NonNull Call<Result<List<Cart>>> call, @NonNull Throwable t) {
                 Log.d("nspDebug", "onFailure: " + t.getMessage());
+                handleNetworkError();
             }
         });
+    }
 
+    private void handleApiError(Response<?> response) {
+        if (response.code() == 500) {
+            android.widget.Toast.makeText(requireContext(), "Server error", android.widget.Toast.LENGTH_SHORT).show();
+        } else {
+            android.widget.Toast.makeText(requireContext(), "Undetectable error", android.widget.Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleNetworkError() {
+        android.widget.Toast.makeText(requireContext(), "Server error", android.widget.Toast.LENGTH_SHORT).show();
     }
 
     @Override
