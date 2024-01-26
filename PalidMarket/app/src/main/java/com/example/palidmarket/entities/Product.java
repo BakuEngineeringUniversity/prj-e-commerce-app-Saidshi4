@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Product {
+    private int id;
     @Expose
     private String name;
     @SerializedName("unitPrice")
@@ -14,10 +15,10 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String unitPrice) {
+    public Product(int id,String name, String unitPrice) {
+        this.id = id;
         this.name = name;
         this.unitPrice = unitPrice;
-
     }
 
     public String getName() {
@@ -36,4 +37,11 @@ public class Product {
         this.unitPrice = unitPrice;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

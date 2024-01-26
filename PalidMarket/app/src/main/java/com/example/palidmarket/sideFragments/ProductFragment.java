@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.palidmarket.R;
 import com.example.palidmarket.adapter.ProductRecycleViewAdapter;
+import com.example.palidmarket.adapter.interfaces.ProductRecycleViewInterFace;
 import com.example.palidmarket.api.ApiClient;
 import com.example.palidmarket.api.ApiInterface;
 import com.example.palidmarket.entities.Product;
@@ -31,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class ProductFragment extends Fragment {
+public class ProductFragment extends Fragment implements ProductRecycleViewInterFace {
 
     private int categoryId;
     private RecyclerView recyclerView;
@@ -39,6 +40,7 @@ public class ProductFragment extends Fragment {
     SharedPreferences sharedPreferences;
     public static final String SHARED_PREFS = "sharedPrefs";
     private static final String TOKEN = "token";
+    private static final String PHONE_NUMBER = "phoneNumber";
 
     public ProductFragment(int categoryId) {
         this.categoryId = categoryId;
@@ -71,7 +73,7 @@ public class ProductFragment extends Fragment {
                     List<Product> products = result.getData();
 
                     if (products != null) {
-                        productAdapter = new ProductRecycleViewAdapter(requireContext(), products);
+                        productAdapter = new ProductRecycleViewAdapter(requireContext(), products,  ProductFragment.this);
                         recyclerView.setAdapter(productAdapter);
 
                         for (Product product : products) {
@@ -86,6 +88,32 @@ public class ProductFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<Result<List<Product>>> call, @NonNull Throwable t) {
                 Log.e("Error", Objects.requireNonNull(t.getMessage()));
+            }
+        });
+    }
+
+    @Override
+    public void addProductToCart(int productId) {
+        Log.d("nspDebug", "addProductToCart: " + productId);
+
+        sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        String phoneNumber = sharedPreferences.getString(PHONE_NUMBER, "");
+
+        Retrofit retrofit = new ApiClient().getClient();
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.addProductToCart("Bearer " + sharedPreferences.getString(TOKEN, ""), phoneNumber,productId).enqueue(new retrofit2.Callback<Result>() {
+            @Override
+            public void onResponse(@NonNull Call<Result> call, @NonNull Response<Result> response) {
+                if (response.body() != null) {
+                    Result result = response.body();
+                    Log.d("nspDebug", "onResponse: " + result.getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Result> call, @NonNull Throwable t) {
+
             }
         });
     }

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/green3"
+    android:background="#DF6BE3"
     tools:context=".sideFragments.ProductFragment">
 
     <TextView
@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="32dp"
-        android:textColor="@color/green1"
+        android:textColor="#00FFE1"
         android:text="Products"
         android:textSize="25sp"
         android:textStyle="bold"
@@ -29,5 +29,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtProduct" />
+        app:layout_constraintTop_toBottomOf="@+id/txtProduct"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

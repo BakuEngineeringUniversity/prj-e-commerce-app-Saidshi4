@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.palidmarket.R;
+import com.example.palidmarket.adapter.interfaces.RecycleViewInterface;
 import com.example.palidmarket.entities.Category;
 
 import java.util.Base64;

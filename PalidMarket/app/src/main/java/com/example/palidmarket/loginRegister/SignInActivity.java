@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.SafeBrowsingResponse;
 import android.widget.EditText;
 
 import com.example.palidmarket.MainActivity;
@@ -31,6 +32,7 @@ public class SignInActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedPrefs";
     private static final String KEY_ID = "id";
     private static final String TOKEN = "token";
+    private static final String PHONE_NUMBER = "phoneNumber";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class SignInActivity extends AppCompatActivity {
                         String token = result.getData().getToken();
 
                         saveTokenToSharedPreferences(token);
+                        savePhoneNumberToSharedPreferences(phoneNumber);
 
                         startActivity(new Intent(SignInActivity.this, MainActivity.class));
                     }
@@ -92,6 +95,12 @@ public class SignInActivity extends AppCompatActivity {
     private void saveTokenToSharedPreferences(String token) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(TOKEN, token);
+        editor.apply();
+    }
+
+    private void savePhoneNumberToSharedPreferences(String phoneNumber) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PHONE_NUMBER, phoneNumber);
         editor.apply();
     }
 

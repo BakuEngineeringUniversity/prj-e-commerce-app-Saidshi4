@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.palidmarket.R;
 import com.example.palidmarket.adapter.CategoryRecycleViewAdapter;
-import com.example.palidmarket.adapter.RecycleViewInterface;
+import com.example.palidmarket.adapter.interfaces.RecycleViewInterface;
 import com.example.palidmarket.api.ApiClient;
 import com.example.palidmarket.api.ApiInterface;
 import com.example.palidmarket.entities.Category;

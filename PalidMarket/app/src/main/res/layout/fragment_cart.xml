@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#90F6B9"
+    android:background="#FCFFFC"
     tools:context=".mainFragments.CartFragment">
 
     <TextView
@@ -26,6 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingBottom="8dp"
+        android:layout_marginBottom="75dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -35,6 +35,11 @@ public interface ApiInterface {
     Call<Result<List<Product>>> getProductsByCategoryId(@Header("Authorization") String token,@Path("getByCategoryId") int getByCategoryId);
     @GET("carts/user/{phoneNumber}")
     Call<Result<List<Cart>>> getCart(@Header("Authorization") String token,@Path("phoneNumber") String phoneNumber);
+    @POST("carts/user/{phoneNumber}/{productId}")
+    Call<Result> addProductToCart(@Header("Authorization") String token,@Path("phoneNumber") String phoneNumber, @Path("productId") int productId);
+
+    @DELETE("carts/user/{phoneNumber}/{productName}")
+    Call<Result> deleteProduct(@Header("Authorization") String token,@Path("phoneNumber") String phoneNumber, @Path("productName") String productName);
 
     @DELETE("users/delete")
     Call<User> deleteUser(@Body User user);
